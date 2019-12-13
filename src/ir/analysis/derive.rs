@@ -155,6 +155,10 @@ impl<'ctx> CannotDerive<'ctx> {
         }
 
         trace!("ty: {:?}", ty);
+        if item.annotations().derive_copy() {
+            return CanDerive::Yes;
+        }
+
         if item.is_opaque(self.ctx, &()) {
             if !self.derive_trait.can_derive_union() &&
                 ty.is_union() &&
@@ -281,6 +285,10 @@ impl<'ctx> CannotDerive<'ctx> {
                     !info.has_non_type_template_params(),
                     "The early ty.is_opaque check should have handled this case"
                 );
+
+                if !self.ctx.options().derive_copy {
+                    return CanDerive::No;
+                }
 
                 if !self.derive_trait.can_derive_compound_forward_decl() &&
                     info.is_forward_declaration()

@@ -7,9 +7,9 @@
     non_upper_case_globals
 )]
 
-/// <div rustbindgen derive="Copy"></div>
+/// <div rustbindgen derive="Copy" derive="Clone"></div>
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Copy)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct inner {
     pub i: ::std::os::raw::c_int,
 }
@@ -34,6 +34,7 @@ fn bindgen_test_layout_inner() {
 #[repr(C)]
 pub union nsStyleUnion {
     pub i: inner,
+    pub primitiveInt: ::std::os::raw::c_int,
     _bindgen_union_align: u32,
 }
 #[test]
@@ -58,6 +59,19 @@ fn bindgen_test_layout_nsStyleUnion() {
             stringify!(nsStyleUnion),
             "::",
             stringify!(i)
+        )
+    );
+    assert_eq!(
+        unsafe {
+            &(*(::std::ptr::null::<nsStyleUnion>())).primitiveInt as *const _
+                as usize
+        },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(nsStyleUnion),
+            "::",
+            stringify!(primitiveInt)
         )
     );
 }

@@ -1839,6 +1839,9 @@ impl CodeGenerator for CompInfo {
             derives.push("Eq");
         }
 
+        // Dedup the computed derives against the annotated derives and then fold them together
+        derives.retain(
+            |implicit| item.annotations().derives().iter().all(|explicit| implicit != explicit));
         derives.extend(item.annotations().derives().iter().map(String::as_str));
 
         if !derives.is_empty() {
