@@ -232,7 +232,19 @@ where
     T: Copy + Into<ItemId>,
 {
     fn can_derive_copy(&self, ctx: &BindgenContext) -> bool {
-        ctx.options().derive_copy && ctx.lookup_can_derive_copy(*self)
+        let mut item = ctx.resolve_item(*self);
+        let type_is_explicitly_copy = loop {
+            if item.annotations().derive_copy() {
+                break true;
+            }
+            if let Some(TypeKind::ResolvedTypeRef(inner)) = item.as_type().map(|ty| ty.kind()) {
+                item = ctx.resolve_item(inner);
+            } else {
+                break false;
+            }
+        };
+
+        type_is_explicitly_copy || (ctx.options().derive_copy && ctx.lookup_can_derive_copy(*self))
     }
 }
 

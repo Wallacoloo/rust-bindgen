@@ -147,6 +147,10 @@ impl Annotations {
         self.disallow_copy
     }
 
+    pub fn derive_copy(&self) -> bool {
+        self.derives.iter().any(|item| item == "Copy")
+    }
+
     /// Should the fields be private?
     pub fn private_fields(&self) -> Option<bool> {
         self.private_fields
